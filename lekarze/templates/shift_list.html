@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm text-left">
+            <h3>Department list:</h3>
+        </div>
+    </div>
+    {{ error }}
+    <div class="row" id="packages">
+    {% if departments %}
+        <div class="col-sm">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                <!--    <th>No.</th> -->
+                    <th>Department</th>
+                    <th>Hospital</th>
+                    <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for department in departments %}
+                    <tr>
+                <!--    <td>{{ forloop.counter }}.</td>  -->
+                    <td>{{ department.name }}</td>
+                    <td>{{ department.hospital }} in {{ department.hospital.city }}, {{department.hospital.city.country }}</td>
+                    <td><center><a class="btn btn-primary" role="button" href="{% url 'lekarze:shiftadd' department.id %}">Add shift</a></center></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+        <div class="col-sm">
+            <p>There are no departments.</p>
+        </div>
+    {% endif %}
+    </div>   
+</div>
+<div class="container">
+    <div class="row justify-content-center" id="pagination">
+    {% if departments.has_other_pages %}
+        <div>
+            {% if departments.has_previous %}
+                <a href="?page={{ departments.previous_page_number }}" class="btn btn-primary btn-lg">&lt;</a>
+            {% else %}
+                <button class="btn btn-primary btn-lg disabled">&lt;</button>
+            {% endif %}
+            {% for i in departments.paginator.page_range %}
+                {% if departments.number == i %}
+                <button class="active btn btn-secondary btn-md"> {{ i }} <span class="sr-only">(current)</span></button>
+                {% else %}
+                <a href="?page={{ i }}" class="btn btn-secondary btn-md"> {{ i }} </a>
+                {% endif %}
+            {% endfor %}
+            {% if departments.has_next %}
+                <a href="?page={{ departments.next_page_number }}" class="btn btn-primary btn-lg">&gt;</a>
+            {% else %}
+                <button class="btn btn-primary btn-lg disabled">&gt;</button>
+            {% endif %}
+        </div>
+    {% endif %}
+    </div>
+</div>
+{% else %}
+<div class="container">
+    <h4>Please login to see content.</h4>
+</div>
+{% endif %}
+{% endblock %}

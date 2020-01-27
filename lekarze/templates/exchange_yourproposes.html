@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm text-left">
+            <h3>Exchanges proposes sent to me:</h3>
+        </div>
+    </div>
+    {{ error }}
+    <div class="row" id="packages">
+    {% if shifts %}
+        <div class="col-sm">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                <!--    <th>No.</th> -->
+                    <th>Proposer</th>
+                    <th>Shift name</th>
+                    <th>New department</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for shift in shifts %}
+                    <tr>
+                <!--    <td>{{ forloop.counter }}.</td>  -->
+                    <td>{{ shift.myshift.staff_name.first_name }} {{ shift.myshift.staff_name.last_name }}</td>
+                    <td><i>{{ shift.myshift.shift_name }}</i> <-> {{ shift.yourshift.shift_name }}</td>
+                    <td><i>{{ shift.myshift.department }}, {{ shift.myshift.department.hospital }} </i></td>
+                    <td><center><i>{{ shift.myshift.start_date }}</i> <-> {{ shift.yourshift.start_date }}<br> <center>to</center><i>{{ shift.myshift.end_date }}</i> <-> {{ shift.yourshift.end_date }}</center></td>
+                    <td><center>
+                        <a class="btn btn-primary" type="button" href="">Accept</a>
+                        <a class="btn btn-danger" type="button" href="">Refuse</a>
+                    </center></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+        *NOTE: <i>Italics</i> values will be your new shift after exchange.
+        </div>
+    </div>
+    {% else %}
+        <div class="col-sm">
+            <p>There are no proposes.</p>
+        </div>
+    {% endif %}
+    </div>   
+</div>
+<div class="container">
+    <div class="row justify-content-center" id="pagination">
+    {% if shift.has_other_pages %}
+        <div>
+            {% if shifts.has_previous %}
+                <a href="?page={{ shifts.previous_page_number }}" class="btn btn-primary btn-lg">&lt;</a>
+            {% else %}
+                <button class="btn btn-primary btn-lg disabled">&lt;</button>
+            {% endif %}
+            {% for i in shifts.paginator.page_range %}
+                {% if shifts.number == i %}
+                <button class="active btn btn-secondary btn-md"> {{ i }} <span class="sr-only">(current)</span></button>
+                {% else %}
+                <a href="?page={{ i }}" class="btn btn-secondary btn-md"> {{ i }} </a>
+                {% endif %}
+            {% endfor %}
+            {% if shifts.has_next %}
+                <a href="?page={{ shifts.next_page_number }}" class="btn btn-primary btn-lg">&gt;</a>
+            {% else %}
+                <button class="btn btn-primary btn-lg disabled">&gt;</button>
+            {% endif %}
+        </div>
+    {% endif %}
+    </div>
+</div>
+{% else %}
+<div class="container">
+    <h4>Please login to see content.</h4>
+</div>
+{% endif %}
+{% endblock %}

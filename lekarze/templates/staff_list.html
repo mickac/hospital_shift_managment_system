@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm text-left">
+            <h3>Staff list:</h3>
+        </div>
+    </div>
+    {{ error }}
+    <div class="row" id="packages">
+    {% if staff %}
+        <div class="col-sm">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                <!--    <th>No.</th> -->
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Email</th>
+                    {% if user.is_superuser %} <th></th> {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for member in staff %}
+                    <tr>
+                <!--    <td>{{ forloop.counter }}.</td>  -->
+                    <td>{{ member.first_name }}</td>
+                    <td>{{ member.last_name }}</td>
+                    <td>{{ member.email }}</td>
+                    {% if user.is_superuser %}    <td><center><button class="btn btn-primary" type="button" data-toggle="modal" href="#DeleteModal{{ member.id }}">Remove</button></center></td> {% endif %}
+                    </tr>
+                    {% if user.is_superuser %}
+                    <div id="DeleteModal{{ member.id }}" class="modal hide fade" data-backdrop="true" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-body">     
+                                    <h4 class="modal-title"><center>Are you sure to remove <i>{{ member.first_name }} {{ member.last_name }}</i> from staff list?</center></h4><br>
+                                </div>
+                                <div class="modal-footer">
+                                    <a class="btn btn-danger btn-default" href="{% url 'lekarze:staffdelete' member.id %}">Remove</a>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+        <div class="col-sm">
+            <p>There are no staff members.</p>
+        </div>
+    {% endif %}
+    </div>   
+</div>
+<div class="container">
+    <div class="row justify-content-center" id="pagination">
+    {% if staff.has_other_pages %}
+        <div>
+            {% if staff.has_previous %}
+                <a href="?page={{ staff.previous_page_number }}" class="btn btn-primary btn-lg">&lt;</a>
+            {% else %}
+                <button class="btn btn-primary btn-lg disabled">&lt;</button>
+            {% endif %}
+            {% for i in staff.paginator.page_range %}
+                {% if staff.number == i %}
+                <button class="active btn btn-secondary btn-md"> {{ i }} <span class="sr-only">(current)</span></button>
+                {% else %}
+                <a href="?page={{ i }}" class="btn btn-secondary btn-md"> {{ i }} </a>
+                {% endif %}
+            {% endfor %}
+            {% if staff.has_next %}
+                <a href="?page={{ staff.next_page_number }}" class="btn btn-primary btn-lg">&gt;</a>
+            {% else %}
+                <button class="btn btn-primary btn-lg disabled">&gt;</button>
+            {% endif %}
+        </div>
+    {% endif %}
+    </div>
+</div>
+{% else %}
+<div class="container">
+    <h4>Please login to see content.</h4>
+</div>
+{% endif %}
+{% endblock %}

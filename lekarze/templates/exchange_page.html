@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block extras %}
+
+  <!-- XDSoft DateTimePicker -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="container">
+<h4>Exchange page:</h4>
+{% if user.is_authenticated %}
+    <div class="row">  
+        <div class="col-sm">
+            <a class="btn btn-primary btn-block" type="button" href="{% url 'lekarze:exchangelist' %}">
+                <br>
+                <b>Make shift exchange propose</b>
+                <br><br>
+            </a>
+        </div> 
+        <div class="col-sm">
+            <a class="btn btn-primary btn-block" type="button" href="{% url 'lekarze:exchangemyproposes' %}">
+                <br>
+                <b>My shift exchange proposes</b>
+                <br><br>
+            </a>
+        </div> 
+        <div class="col-sm">
+            <a class="btn btn-primary btn-block" type="button" href="{% url 'lekarze:exchangeyourproposes' %}">
+                <br>
+                <b>Someone shift exchange proposes</b>
+                <br><br>
+            </a>
+        </div> 
+    </div>
+{% else %}
+    <div class="row">  
+        <h4>Please login to see content.</h4>
+    </div>
+{% endif %}
+</div>
+
+{% endblock %}

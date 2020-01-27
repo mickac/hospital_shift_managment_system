@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm text-left">
+            <h3>Hospital list:</h3>
+        </div>
+    </div>
+    {{ error }}
+    <div class="row" id="packages">
+    {% if hospitals %}
+        <div class="col-sm">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                <!--    <th>No.</th> -->
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Country</th>
+                    {% if user.is_superuser %} <th></th> {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for hospital in hospitals %}
+                    <tr>
+                <!--    <td>{{ forloop.counter }}.</td>  -->
+                    <td>{{ hospital.name }}</td>
+                    <td>{{ hospital.address }}</td>
+                    <td>{{ hospital.city }}</td>
+                    <td>{{ hospital.city.country }}</td>
+                    {% if user.is_superuser %}    <td><center><button class="btn btn-primary" type="button" data-toggle="modal" href="#DeleteModal{{ hospital.id }}">Remove</button></center></td> {% endif %}
+                    </tr>
+                    {% if user.is_superuser %}
+                    <div id="DeleteModal{{ hospital.id }}" class="modal hide fade" data-backdrop="true" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-body">     
+                                    <h4 class="modal-title"><center>Are you sure to remove <i>{{ hospital.name }} in {{ hospital.city }}</i> from city list?</center></h4><br>
+                                </div>
+                                <div class="modal-footer">
+                                    <a class="btn btn-danger btn-default" href="{% url 'lekarze:hospitaldelete' hospital.id %}">Remove</a>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+        <div class="col-sm">
+            <p>There are no hospitals.</p>
+        </div>
+    {% endif %}
+    </div>   
+</div>
+<div class="container">
+    <div class="row justify-content-center" id="pagination">
+    {% if hospitals.has_other_pages %}
+        <div>
+            {% if hospitals.has_previous %}
+                <a href="?page={{ hospitals.previous_page_number }}" class="btn btn-primary btn-lg">&lt;</a>
+            {% else %}
+                <button class="btn btn-primary btn-lg disabled">&lt;</button>
+            {% endif %}
+            {% for i in hospitals.paginator.page_range %}
+                {% if hospitals.number == i %}
+                <button class="active btn btn-secondary btn-md"> {{ i }} <span class="sr-only">(current)</span></button>
+                {% else %}
+                <a href="?page={{ i }}" class="btn btn-secondary btn-md"> {{ i }} </a>
+                {% endif %}
+            {% endfor %}
+            {% if hospitals.has_next %}
+                <a href="?page={{ hospitals.next_page_number }}" class="btn btn-primary btn-lg">&gt;</a>
+            {% else %}
+                <button class="btn btn-primary btn-lg disabled">&gt;</button>
+            {% endif %}
+        </div>
+    {% endif %}
+    </div>
+</div>
+{% else %}
+<div class="container">
+    <h4>Please login to see content.</h4>
+</div>
+{% endif %}
+{% endblock %}

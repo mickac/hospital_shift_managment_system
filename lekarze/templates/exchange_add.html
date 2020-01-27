@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+{% if user.is_authenticated %}
+<h4>Requested shift informations:</h4>
+    <div class="row">  
+        <b>Owner:</b> {{ yourshift.staff_name.first_name }} {{ yourshift.staff_name.last_name }}<br>
+        <b>Shift name:</b> {{ yourshift.shift_name }} <br>
+        <b>Shift starts:</b> {{ yourshift.start_date }} <br>
+        <b>Shift ends:</b> {{ yourshift.end_date }} <br>
+        <b>Place:</b> {{ yourshift.department }} in {{ yourshift.department.hospital }} in {{ yourshift.department.hospital.city }}, {{ yourshift.department.hospital.city.country }} <br>
+        <div class="form-group">
+            <form method="post" action="{% url 'lekarze:exchangeadding' %}">
+                {% csrf_token %}
+                <label><b>Your shifts:</b></label>
+                <select class="form-control" id="myshift" name="myshift">
+                    {% for shift in myshifts %}
+                    <option value="{{ shift.shift_id }}">{{ shift.shift_name }} in {{ shift.department }}, {{ shift.department.hospital }}</option>
+                    {% endfor %}
+                </select><br>
+                <input type="hidden" id="yourshift" name="yourshift" value="{{ yourshift.shift_id }}">
+                <input type="hidden" id="owner" name="owner" value="{{ yourshift.staff_name }}">
+                <button type="submit" class="btn btn-primary">Make propose</button>
+            </form>
+        </div>
+{% else %}
+    <div class="row">  
+        <h4>Please login to see content.</h4>
+    </div>
+{% endif %}
+</div>
+{% endblock %}

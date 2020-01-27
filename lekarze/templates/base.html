@@ -1,0 +1,127 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	{% block extras %}
+	{% endblock %}
+    
+    <title>Lekarze</title>
+  </head>
+  <body>
+	<div class="container">
+        <h1 class="mt-2"> <a href="{% url 'home' %}" style="text-decoration: none; color: black;">Bazy danych - projekt lekarze</a> </h1>
+		<nav class="navbar navbar-expand-lg">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div id="navbarNavDropdown" class="navbar-collapse collapse nav-tabs">
+				<ul class="navbar-nav mr-auto">
+					{% if user.is_authenticated %}
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Work shifts
+						</a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+							<a class="dropdown-item" href="{% url 'lekarze:shiftcalendar' %}">Calendar</a>
+							<a class="dropdown-item" href="{% url 'lekarze:shiftlist' %}">Add shift</a>
+							<a class="dropdown-item" href="{% url 'lekarze:exchangepage' %}">Exchange shift page</a>	
+						</div>
+					{% endif %}
+					{% if user.is_superuser %}
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Places
+						</a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+							<a class="dropdown-item" href="{% url 'lekarze:countryadd' %}">Add country</a>
+							<a class="dropdown-item" href="{% url 'lekarze:cityadd' %}">Add city</a>
+						</div>
+				</li>
+					<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								Hospitals
+							</a>
+							<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+								<a class="dropdown-item" href="{% url 'lekarze:hospitallist' %}">Hospital list</a>
+								<a class="dropdown-item" href="{% url 'lekarze:hospitaladd' %}">Add hospital</a>
+							</div>
+					</li>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Departments
+						</a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+							<a class="dropdown-item" href="{% url 'lekarze:departmentlist' %}">Departments list</a>
+							<a class="dropdown-item" href="{% url 'lekarze:departmentadd' %}">Add department</a>
+						</div>
+					</li>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Staff
+						</a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+							<a class="dropdown-item" href="{% url 'lekarze:stafflist' %}">Staff list</a>
+							<a class="dropdown-item" href="{% url 'lekarze:staffadd' %}">Add staff member</a>
+						</div>
+					</li>
+					{% elif user.is_authenticated %}
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'lekarze:hospitallist' %}">Hospitals</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'lekarze:departmentlist' %}">Departments</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'lekarze:stafflist' %}">Staff</a>
+					</li>
+					{% endif %}			
+				</ul>
+				<ul class="navbar-nav">
+				{% if user.is_superuser %}
+					<li class="nav-item">
+						<a class="nav-link" href="/admin">Django Administrator Panel</a>
+					</li>
+				{% endif %}
+				{% if user.is_authenticated %}
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'logout' %}">Logout</a>
+					</li>			
+				{% else %}
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'login' %}">Login</a>
+					</li>
+				{% endif %}
+				</ul>
+			</div>
+		</nav>
+    </div>
+	<br>
+	{% block content %}
+	{% endblock %}
+
+	<script>
+		$(document).ready(function () {
+			$(function () {
+			$("#id_start_date").datetimepicker({
+				allowTimes:[
+					'07:00', '19:00'
+				],
+				format: 'Y-m-d H:i',
+			});
+			});
+		});
+
+	  </script> 
+  </body>
+</html>

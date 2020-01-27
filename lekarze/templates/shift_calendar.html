@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extras %}
+<link href="{% static "fullcalendar/core/main.css" %}" rel='stylesheet' />
+<link href="{% static "fullcalendar/daygrid/main.css" %}" rel='stylesheet' />
+<link href="{% static "fullcalendar/bootstrap/main.css" %}" rel='stylesheet' />
+
+<script src="{% static "fullcalendar/core/main.js" %}"></script>
+<script src="{% static "fullcalendar/daygrid/main.js" %}"></script>
+<script src="{% static "fullcalendar/bootstrap/main.js" %}"></script>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        
+        plugins: [ 'dayGrid' ],
+        events: [
+          {% for i in shifts %}
+                {
+                    title: "{{ i.shift_name }} in {{ i.department.hospital }}",
+                    start: '{{ i.start_date|date:"Y-m-d" }}T{{ i.start_date|date:"H:i:s" }}' ,
+                    end: '{{ i.end_date|date:"Y-m-d" }}T{{ i.end_date|date:"H:i:s" }}',
+                    extendedProps: {
+                      hospital: '{{ i.department.hospital }}',
+                      department: '{{ i.department }}',
+                      city: '{{ i.department.hospital.city }}',
+                      country: '{{ i.department.hospital.city.country }}',
+                      staff_firstname: '{{ i.staff_name.first_name }}',
+                      staff_lastname: '{{ i.staff_name.last_name}}',
+                      date_start: "{{ i.start_date }}",
+                      date_end: "{{ i.end_date }}",
+                    },
+                },
+          {% endfor %}
+        ],
+
+        eventClick:  function(info) {
+            var eventObj = info.event;            
+            $('#calendarModal').modal();
+      
+            document.getElementById("modalTitle").innerHTML = "Information about <i>" + eventObj.title + "</i> shift";
+            document.getElementById("modalStaff").innerHTML = "<b>Staff member:</b> " + eventObj.extendedProps.staff_firstname + " " + eventObj.extendedProps.staff_lastname;
+            document.getElementById("modalPlace").innerHTML = "<b>Place:</b> " + eventObj.extendedProps.department + ", " + eventObj.extendedProps.hospital + " in " + eventObj.extendedProps.city + ", " + eventObj.extendedProps.country;
+            document.getElementById("modalStart").innerHTML = "<b>Shift starts:</b> " + eventObj.extendedProps.date_start;
+            document.getElementById("modalEnd").innerHTML = "<b>Shift ends:</b> " + eventObj.extendedProps.date_end;
+
+        },
+      });
+
+      calendar.render();
+    });
+
+  </script>
+{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div id='calendar'></div>
+</div>
+<div id="calendarModal" class="modal fade">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 id="modalTitle" class="modal-title"></h4>
+          </div>
+          <div id="modalBody" class="modal-body"> 
+            <div id="modalStaff"></div>
+            <div id="modalPlace"></div>
+            <div id="modalStart"></div>
+            <div id="modalEnd"></div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+      </div>
+  </div>
+</div>
+  
+{% endblock %}
