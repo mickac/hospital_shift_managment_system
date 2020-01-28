@@ -414,3 +414,33 @@ def exchange_yourproposes(request):
             error = "Something went wrong. If error occurs often please send error message contained below to administator."
             error_message = str(exception)
             return render(request, 'error.html', {'em':error_message, 'e':error})   
+
+def exchange_accept(request, pk):
+    if request.user.is_authenticated:
+        try:
+            exchange = Exchange.objects.get(id = pk)
+            shift1 = Shift.objects.get(shift_id = exchange.yourshift.shift_id)
+            shift2 = Shift.objects.get(shift_id = exchange.myshift.shift_id)
+            shift1.staff_name = exchange.who
+            shift2.staff_name = exchange.whom
+            exchange.status = 2
+            shift1.save()
+            shift2.save()
+            exchange.save()
+            return redirect('lekarze:exchangeyourproposes')
+        except Exception as exception:
+            error = "Something went wrong. If error occurs often please send error message contained below to administator."
+            error_message = str(exception)
+            return render(request, 'error.html', {'em':error_message, 'e':error})   
+
+def exchange_refuse(request, pk):
+    if request.user.is_authenticated:
+        try:
+            exchange = Exchange.objects.get(id = pk)
+            exchange.status = 1
+            exchange.save()
+            return redirect('lekarze:exchangeyourproposes')
+        except Exception as exception:
+            error = "Something went wrong. If error occurs often please send error message contained below to administator."
+            error_message = str(exception)
+            return render(request, 'error.html', {'em':error_message, 'e':error})   

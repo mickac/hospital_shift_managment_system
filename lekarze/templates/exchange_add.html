@@ -4,12 +4,12 @@
 <div class="container">
 {% if user.is_authenticated %}
 <h4>Requested shift informations:</h4>
-    <div class="row">  
-        <b>Owner:</b> {{ yourshift.staff_name.first_name }} {{ yourshift.staff_name.last_name }}<br>
-        <b>Shift name:</b> {{ yourshift.shift_name }} <br>
-        <b>Shift starts:</b> {{ yourshift.start_date }} <br>
-        <b>Shift ends:</b> {{ yourshift.end_date }} <br>
-        <b>Place:</b> {{ yourshift.department }} in {{ yourshift.department.hospital }} in {{ yourshift.department.hospital.city }}, {{ yourshift.department.hospital.city.country }} <br>
+<div class="col-sm">
+        <label><b>Owner:</b> {{ yourshift.staff_name.first_name }} {{ yourshift.staff_name.last_name }}</label><br>
+        <label><b>Shift name:</b> {{ yourshift.shift_name }} </label><br>
+        <label><b>Shift starts:</b> {{ yourshift.start_date }} </label><br>
+        <label><b>Shift ends:</b> {{ yourshift.end_date }} </label><br>
+        <label><b>Place:</b> {{ yourshift.department }} in {{ yourshift.department.hospital }} in {{ yourshift.department.hospital.city }}, {{ yourshift.department.hospital.city.country }} </label><br>
         <div class="form-group">
             <form method="post" action="{% url 'lekarze:exchangeadding' %}">
                 {% csrf_token %}
@@ -25,7 +25,7 @@
             </form>
         </div>
 {% else %}
-    <div class="row">  
+<div class="col-sm">
         <h4>Please login to see content.</h4>
     </div>
 {% endif %}

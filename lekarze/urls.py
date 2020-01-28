@@ -28,4 +28,6 @@ urlpatterns = [
     path('exchangeadding', views.exchange_adding, name='exchangeadding'),
     path('exchangemyproposes', views.exchange_myproposes, name='exchangemyproposes'),
     path('exchangeyourproposes', views.exchange_yourproposes, name='exchangeyourproposes'),
+    path('<int:pk>/exchangeaccept', views.exchange_accept, name='exchangeaccept'),
+    path('<int:pk>/exchangerefuse', views.exchange_refuse, name='exchangerefuse'),
 ]

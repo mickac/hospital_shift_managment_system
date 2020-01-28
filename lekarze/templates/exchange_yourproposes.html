@@ -31,8 +31,8 @@
                     <td><i>{{ shift.myshift.department }}, {{ shift.myshift.department.hospital }} </i></td>
                     <td><center><i>{{ shift.myshift.start_date }}</i> <-> {{ shift.yourshift.start_date }}<br> <center>to</center><i>{{ shift.myshift.end_date }}</i> <-> {{ shift.yourshift.end_date }}</center></td>
                     <td><center>
-                        <a class="btn btn-primary" type="button" href="">Accept</a>
-                        <a class="btn btn-danger" type="button" href="">Refuse</a>
+                        <a class="btn btn-primary" type="button" href="{% url 'lekarze:exchangeaccept' shift.id %}">Accept</a>
+                        <a class="btn btn-danger" type="button" href="{% url 'lekarze:exchangerefuse' shift.id %}">Refuse</a>
                     </center></td>
                     </tr>
                 {% endfor %}

@@ -10,7 +10,95 @@
 <script src="{% static "fullcalendar/bootstrap/main.js" %}"></script>
 
 <script>
+  $(document).ready(function() {
 
+    function exportTableToCSV($table, filename) {
+
+      var $rows = $table.find('tr:has(td)'),
+
+        // Temporary delimiter characters unlikely to be typed by keyboard
+        // This is to avoid accidentally splitting the actual contents
+        tmpColDelim = String.fromCharCode(11), // vertical tab character
+        tmpRowDelim = String.fromCharCode(0), // null character
+
+        // actual delimiter characters for CSV format
+        colDelim = '","',
+        rowDelim = '"\r\n"',
+
+        // Grab text from table into CSV formatted string
+        csv = '"' + $rows.map(function(i, row) {
+          var $row = $(row),
+            $cols = $row.find('td');
+
+          return $cols.map(function(j, col) {
+            var $col = $(col),
+              text = $col.text();
+
+            return text.replace(/"/g, '""'); // escape double quotes
+
+          }).get().join(tmpColDelim);
+
+        }).get().join(tmpRowDelim)
+        .split(tmpRowDelim).join(rowDelim)
+        .split(tmpColDelim).join(colDelim) + '"';
+
+      // Deliberate 'false', see comment below
+      if (false && window.navigator.msSaveBlob) {
+
+        var blob = new Blob([decodeURIComponent(csv)], {
+          type: 'text/csv;charset=utf8'
+        });
+
+        // Crashes in IE 10, IE 11 and Microsoft Edge
+        // See MS Edge Issue #10396033
+        // Hence, the deliberate 'false'
+        // This is here just for completeness
+        // Remove the 'false' at your own risk
+        window.navigator.msSaveBlob(blob, filename);
+
+      } else if (window.Blob && window.URL) {
+        // HTML5 Blob        
+        var blob = new Blob([csv], {
+          type: 'text/csv;charset=utf-8'
+        });
+        var csvUrl = URL.createObjectURL(blob);
+
+        $(this)
+          .attr({
+            'download': filename,
+            'href': csvUrl
+          });
+      } else {
+        // Data URI
+        var csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
+
+        $(this)
+          .attr({
+            'download': filename,
+            'href': csvData,
+            'target': '_blank'
+          });
+      }
+      }
+
+      // This must be a hyperlink
+      $(".export").on('click', function(event) {
+      // CSV
+      var args = [$('#dvData>table'), 'export.csv'];
+
+      exportTableToCSV.apply(this, args);
+
+      // If CSV, don't do event.preventDefault() or return false
+      // We actually need this to be a typical hyperlink
+      });
+    });
+    $(function() {
+      $('button').click(function() {
+        var url = 'data:application/vnd.ms-excel,' + encodeURIComponent($('#calendarExport').html())
+        location.href = url
+        return false
+      })
+    });
     document.addEventListener('DOMContentLoaded', function() {
       var calendarEl = document.getElementById('calendar');
 
@@ -47,6 +135,11 @@
             document.getElementById("modalStart").innerHTML = "<b>Shift starts:</b> " + eventObj.extendedProps.date_start;
             document.getElementById("modalEnd").innerHTML = "<b>Shift ends:</b> " + eventObj.extendedProps.date_end;
 
+            document.getElementById("exportTitle").innerHTML = eventObj.title;
+            document.getElementById("exportStaff").innerHTML = eventObj.extendedProps.staff_firstname + " " + eventObj.extendedProps.staff_lastname;
+            document.getElementById("exportPlace").innerHTML = eventObj.extendedProps.department + ", " + eventObj.extendedProps.hospital + " in " + eventObj.extendedProps.city + ", " + eventObj.extendedProps.country;
+            document.getElementById("exportStart").innerHTML = eventObj.extendedProps.date_start;
+            document.getElementById("exportEnd").innerHTML = eventObj.extendedProps.date_end;
         },
       });
 
@@ -56,8 +149,36 @@
   </script>
 {% endblock %}
 {% block content %}
+<div id="dvData" hidden>
+  <table>
+      <tr>
+        <th>Subject</th> 
+        <th>Start Date</th>
+        <th>Start Time</th>
+        <th>End Date</th>
+        <th>End Time</th>
 
+      </tr>
+      {% for i in shifts %}
+      <tr>
+        <td>{{ i.shift_name }}
+        <td>{{ i.start_date|date:"m/d/Y" }}</td>
+        <td>{{ i.start_date|time:"g:i A" }}</td>
+        <td>{{ i.end_date|date:"m/d/Y" }}</td>
+        <td>{{ i.end_date|time:"g:i A" }}</td>
+        <!--
+        <td>
+        Staff member: {{ i.staff_name.first_name }} {{ i.staff_name.last_name}} 
+        Location: {{ i.department }} {{ i.department.hospital }} in {{ i.department.hospital.city }} {{ i.department.hospital.city.country }}
+        </td>
+        -->
+      </tr>
+      {% endfor %}
+  </table>
+</div>
 <div class="container">
+    <button>Export calendar to CSV</button>
+    <a href="#" class="export">Export Table data into Excel</a>
     <div id='calendar'></div>
 </div>
 <div id="calendarModal" class="modal fade">
@@ -78,5 +199,6 @@
       </div>
   </div>
 </div>
-  
+
+
 {% endblock %}
