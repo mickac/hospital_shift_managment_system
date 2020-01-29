@@ -310,8 +310,16 @@ def shift_add(request, pk):
                     obj.end_date = end_date
                     obj.staff_name_id = staff.id
                     obj.department = department
+                    send_mail(
+                        'Your shift has been added!' ,
+                        'Shift ' + form.cleaned_data['shift_name'] + ' has been added to our system. Starting date is ' + str(start_date) + ' and and date is ' + str(end_date) + '. This shift will took place in ' + department.name + ' at ' + department.hospital.name + ' in ' + department.hospital.city.name + ',' +department.hospital.city.country.name + '.',
+                        settings.EMAIL_HOST_USER,
+                        [staff.email],
+                        fail_silently=False,
+                    )
                     obj.save()
                     ShiftCounter.objects.filter(date = start_date, shift_type = shift_type, department = department).update(counter = F('counter')+1)
+
                     return redirect('lekarze:shiftcalendar')
         else:
             form = ShiftAdd()

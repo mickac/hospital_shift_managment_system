@@ -10,95 +10,95 @@
 <script src="{% static "fullcalendar/bootstrap/main.js" %}"></script>
 
 <script>
-  $(document).ready(function() {
+$( document ).ready(function(){
+$('#export').click(function() {
+  var titles = [];
+  var data = [];
 
-    function exportTableToCSV($table, filename) {
+  /*
+   * Get the table headers, this will be CSV headers
+   * The count of headers will be CSV string separator
+   */
+  $('.dataTable th').each(function() {
+    titles.push($(this).text());
+  });
 
-      var $rows = $table.find('tr:has(td)'),
+  /*
+   * Get the actual data, this will contain all the data, in 1 array
+   */
+  $('.dataTable td').each(function() {
+    data.push($(this).text());
+  });
+  
+  /*
+   * Convert our data to CSV string
+   */
+  var CSVString = prepCSVRow(titles, titles.length, '');
+  CSVString = prepCSVRow(data, titles.length, CSVString);
 
-        // Temporary delimiter characters unlikely to be typed by keyboard
-        // This is to avoid accidentally splitting the actual contents
-        tmpColDelim = String.fromCharCode(11), // vertical tab character
-        tmpRowDelim = String.fromCharCode(0), // null character
+  /*
+   * Make CSV downloadable
+   */
+  var downloadLink = document.createElement("a");
+  var blob = new Blob(["\ufeff", CSVString]);
+  var url = URL.createObjectURL(blob);
+  downloadLink.href = url;
+  downloadLink.download = "data.csv";
 
-        // actual delimiter characters for CSV format
-        colDelim = '","',
-        rowDelim = '"\r\n"',
+  /*
+   * Actually download CSV
+   */
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+});
 
-        // Grab text from table into CSV formatted string
-        csv = '"' + $rows.map(function(i, row) {
-          var $row = $(row),
-            $cols = $row.find('td');
+   /*
+* Convert data array to CSV string
+* @param arr {Array} - the actual data
+* @param columnCount {Number} - the amount to split the data into columns
+* @param initial {String} - initial string to append to CSV string
+* return {String} - ready CSV string
+*/
+function prepCSVRow(arr, columnCount, initial) {
+  var row = ''; // this will hold data
+  var delimeter = ','; // data slice separator, in excel it's `;`, in usual CSv it's `,`
+  var newLine = '\r\n'; // newline separator for CSV row
 
-          return $cols.map(function(j, col) {
-            var $col = $(col),
-              text = $col.text();
-
-            return text.replace(/"/g, '""'); // escape double quotes
-
-          }).get().join(tmpColDelim);
-
-        }).get().join(tmpRowDelim)
-        .split(tmpRowDelim).join(rowDelim)
-        .split(tmpColDelim).join(colDelim) + '"';
-
-      // Deliberate 'false', see comment below
-      if (false && window.navigator.msSaveBlob) {
-
-        var blob = new Blob([decodeURIComponent(csv)], {
-          type: 'text/csv;charset=utf8'
-        });
-
-        // Crashes in IE 10, IE 11 and Microsoft Edge
-        // See MS Edge Issue #10396033
-        // Hence, the deliberate 'false'
-        // This is here just for completeness
-        // Remove the 'false' at your own risk
-        window.navigator.msSaveBlob(blob, filename);
-
-      } else if (window.Blob && window.URL) {
-        // HTML5 Blob        
-        var blob = new Blob([csv], {
-          type: 'text/csv;charset=utf-8'
-        });
-        var csvUrl = URL.createObjectURL(blob);
-
-        $(this)
-          .attr({
-            'download': filename,
-            'href': csvUrl
-          });
+  /*
+   * Convert [1,2,3,4] into [[1,2], [3,4]] while count is 2
+   * @param _arr {Array} - the actual array to split
+   * @param _count {Number} - the amount to split
+   * return {Array} - splitted array
+   */
+  function splitArray(_arr, _count) {
+    var splitted = [];
+    var result = [];
+    _arr.forEach(function(item, idx) {
+      if ((idx + 1) % _count === 0) {
+        splitted.push(item);
+        result.push(splitted);
+        splitted = [];
       } else {
-        // Data URI
-        var csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
-
-        $(this)
-          .attr({
-            'download': filename,
-            'href': csvData,
-            'target': '_blank'
-          });
+        splitted.push(item);
       }
-      }
-
-      // This must be a hyperlink
-      $(".export").on('click', function(event) {
-      // CSV
-      var args = [$('#dvData>table'), 'export.csv'];
-
-      exportTableToCSV.apply(this, args);
-
-      // If CSV, don't do event.preventDefault() or return false
-      // We actually need this to be a typical hyperlink
-      });
     });
-    $(function() {
-      $('button').click(function() {
-        var url = 'data:application/vnd.ms-excel,' + encodeURIComponent($('#calendarExport').html())
-        location.href = url
-        return false
-      })
+    return result;
+  }
+  var plainArr = splitArray(arr, columnCount);
+  // don't know how to explain this
+  // you just have to like follow the code
+  // and you understand, it's pretty simple
+  // it converts `['a', 'b', 'c']` to `a,b,c` string
+  plainArr.forEach(function(arrItem) {
+    arrItem.forEach(function(item, idx) {
+      row += item + ((idx + 1) === arrItem.length ? '' : delimeter);
     });
+    row += newLine;
+  });
+  return initial + row;
+}
+});
     document.addEventListener('DOMContentLoaded', function() {
       var calendarEl = document.getElementById('calendar');
 
@@ -149,36 +149,22 @@
   </script>
 {% endblock %}
 {% block content %}
-<div id="dvData" hidden>
-  <table>
-      <tr>
-        <th>Subject</th> 
-        <th>Start Date</th>
-        <th>Start Time</th>
-        <th>End Date</th>
-        <th>End Time</th>
 
-      </tr>
-      {% for i in shifts %}
-      <tr>
-        <td>{{ i.shift_name }}
-        <td>{{ i.start_date|date:"m/d/Y" }}</td>
-        <td>{{ i.start_date|time:"g:i A" }}</td>
-        <td>{{ i.end_date|date:"m/d/Y" }}</td>
-        <td>{{ i.end_date|time:"g:i A" }}</td>
-        <!--
-        <td>
-        Staff member: {{ i.staff_name.first_name }} {{ i.staff_name.last_name}} 
-        Location: {{ i.department }} {{ i.department.hospital }} in {{ i.department.hospital.city }} {{ i.department.hospital.city.country }}
-        </td>
-        -->
-      </tr>
-      {% endfor %}
-  </table>
-</div>
 <div class="container">
-    <button>Export calendar to CSV</button>
-    <a href="#" class="export">Export Table data into Excel</a>
+  <button type="button" class="btn btn-primary" id="export">Export calendar to CSV</button>
+
+  <div hidden>
+    <table class="dataTable">
+      <tr>
+        <th>"Subject","Start Date","Start Time","End Date","End Time","Location"</th>
+      </tr>
+        {% for i in shifts %}
+        <tr>
+          <td>{{ i.shift_name }},{{ i.start_date|date:"m/d/Y" }},{{ i.start_date|time:"g:i A" }},{{ i.end_date|date:"m/d/Y" }},{{ i.end_date|time:"g:i A" }},"{{ i.department }} - {{ i.department.hospital }} in {{ i.department.hospital.city }} - {{ i.department.hospital.city.country }}"</td>
+        </tr>
+        {% endfor %}
+    </table>
+  </div>
     <div id='calendar'></div>
 </div>
 <div id="calendarModal" class="modal fade">
