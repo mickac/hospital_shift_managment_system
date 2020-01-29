@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cac7fd319af724c4e7c61569574b8b42e8fdc0fb0e787f178beed713835fb1be"
+            "sha256": "307ae8e87f1b4d5fd10abd16f67a130fffd32b0ea65807f6af4203575b9eb74e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -46,13 +46,6 @@
             "index": "pypi",
             "version": "==1.8.1"
         },
-        "django-timezone-field": {
-            "hashes": [
-                "sha256:758b7d41084e9ea2e89e59eb616e9b6326e6fbbf9d14b6ef062d624fe8cc6246",
-                "sha256:7e3620fe2211c2d372fad54db8f86ff884098d018d56fda4dca5e64929e05ffc"
-            ],
-            "version": "==4.0"
-        },
         "django-widget-tweaks": {
             "hashes": [
                 "sha256:65c960f3d75008a285e4b10f4d21f9eae4160fd77a0f6097ad545185f8648bd6",
@@ -61,37 +54,12 @@
             "index": "pypi",
             "version": "==1.4.5"
         },
-        "docopt": {
-            "hashes": [
-                "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"
-            ],
-            "version": "==0.6.2"
-        },
         "feedgen": {
             "hashes": [
-                "sha256:26557304284007a3c2d772c376a48c0a8ec8e24371c4471455ea89cf568fa114"
-            ],
-            "version": "==0.8.0"
-        },
-        "holidays": {
-            "hashes": [
-                "sha256:3182c4a6fef8d01a829468362ace9c3bba7645873610535fef53454dbb4ea092"
-            ],
-            "version": "==0.9.12"
-        },
-        "icalendar": {
-            "hashes": [
-                "sha256:347151cb935f5f2f83d58f6dd8aef8558df69f6c1709f1d2cab2000b36def299",
-                "sha256:45b9bd1b59107b25db688160ebd8d3916b5a8fae65992dae5d7fc0b102a9ab21"
-            ],
-            "version": "==4.0.4"
-        },
-        "ls-joyous": {
-            "hashes": [
-                "sha256:84a9ae12f79ad57734fcb029f9754d2da3de89e3776d96177e1122927d0c85a1"
+                "sha256:8e811bdbbed6570034950db23a4388453628a70e689a6e8303ccec430f5a804a"
             ],
             "index": "pypi",
-            "version": "==0.9.4"
+            "version": "==0.9.0"
         },
         "lxml": {
             "hashes": [
@@ -123,13 +91,6 @@
                 "sha256:f6ed60a62c5f1c44e789d2cf14009423cb1646b44a43e40a9cf6a21f077678a1"
             ],
             "version": "==4.4.2"
-        },
-        "num2words": {
-            "hashes": [
-                "sha256:0b6e5f53f11d3005787e206d9c03382f459ef048a43c544e3db3b1e05a961548",
-                "sha256:37cd4f60678f7e1045cdc3adf6acf93c8b41bf732da860f97d301f04e611cc57"
-            ],
-            "version": "==0.5.10"
         },
         "psycopg2": {
             "hashes": [
